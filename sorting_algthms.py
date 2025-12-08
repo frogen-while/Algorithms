@@ -1,3 +1,4 @@
+
 def bubble_sort(arr):
     n = len(arr)
     for i in range(1, n):
@@ -46,6 +47,30 @@ def merge_sort(arr):
     right_half = merge_sort(arr[mid:])
 
     return merge(left_half, right_half)
+
+def partition(arr, low, high):
+    pivot = arr[high]
+    i = low
+    for k in range(low, high):
+        if arr[k] < pivot:
+            arr[i], arr[k] = arr[k], arr[i]
+            i+=1
+    arr[i], arr[high] = arr[high], arr[i]
+    return i
+
+def quick_sort(arr, low, high):
+    if low < high:
+        
+        pi = partition(arr, low, high)
+
+        arr = quick_sort(arr, low, pi - 1)
+        arr = quick_sort(arr, pi + 1, high)
+
+    return arr
+
+
+
+
 
 
 
