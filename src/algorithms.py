@@ -73,8 +73,10 @@ def counting_sort(arr, exp):
     ctnarr = [0] * 10
     ans = [0] * n 
 
-    for num in arr:
-        ctnarr[num]+=1
+
+    for i in range(n):
+        index = arr[i] // exp
+        ctnarr[index % 10] += 1
     
     for i in range(1, 10):
         ctnarr[i]+=ctnarr[i-1]
@@ -87,7 +89,13 @@ def counting_sort(arr, exp):
         i-=1
 
     return ans
-
+def radix_sort(arr):
+    maxval = max(arr)
+    exp = 1
+    while maxval / exp >=1:
+        arr = counting_sort(arr, exp)
+        exp*=10
+    return arr
     
 
 
