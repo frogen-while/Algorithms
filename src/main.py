@@ -2,7 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import csv
 import random
-import sorting_algthms as sa
+import src.algorithms as sa
 import time
 
 def generate_list(size: int,) -> list:
