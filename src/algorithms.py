@@ -92,7 +92,7 @@ def counting_sort(arr, exp):
 def radix_sort(arr):
     maxval = max(arr)
     exp = 1
-    while maxval / exp >=1:
+    while maxval // exp >= 1:
         arr = counting_sort(arr, exp)
         exp*=10
     return arr

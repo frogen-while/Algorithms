@@ -1,4 +1,4 @@
 *venv/
 *data/
 *__pycache__/
-card_data_matcher.py
+*.csv
