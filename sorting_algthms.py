@@ -66,9 +66,29 @@ def quick_sort(arr, low, high):
         arr = quick_sort(arr, low, pi - 1)
         arr = quick_sort(arr, pi + 1, high)
 
-    return arr
+    return arr 
+# ONLY FOR RADIX!!! DOES NOT WORK INDEPENDENTLY!!!
+def counting_sort(arr, exp):
+    n = len(arr)
+    ctnarr = [0] * 10
+    ans = [0] * n 
 
+    for num in arr:
+        ctnarr[num]+=1
+    
+    for i in range(1, 10):
+        ctnarr[i]+=ctnarr[i-1]
 
+    i = n-1
+    while i>=0:
+        index = (arr[i]//exp)%10
+        ans[ctnarr[index]-1] = arr[i]
+        ctnarr[index]-=1
+        i-=1
+
+    return ans
+
+    
 
 
 
