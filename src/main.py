@@ -5,6 +5,11 @@ import random
 import algorithms as alg
 import statistics as st
 import time
+import os
+
+PATH_TO_SAVE_TABLE = "outputs/tables/metrics.csv"
+PATH_TO_SAVE_PLOT = "outputs/plots/comparison_plot.png"
+
 
 def generate_list(size: int) -> list:
     return [random.randint(0, 100) for _ in range(size)]
@@ -27,7 +32,6 @@ algorithms = {
 
 def compare_algorithms(listed_algs: dict):
     sizes = [10, 50, 100, 500, 1000, 3000]
-    final_data = {name: [] for name in listed_algs.keys()}
     results = [{},{},{},{},{},{}]
     temp = []
     i = 0
@@ -46,6 +50,29 @@ def compare_algorithms(listed_algs: dict):
             
     return sizes, results
     
+def save_metrics(savepath):
+    sizes, data = compare_algorithms(algorithms)
+    df = pd.DataFrame(data, index=sizes)
+    df.to_csv(savepath, index_label="Size")
 
-
+def generate_plot(savepath):
+    if not os.path.exists(PATH_TO_SAVE_TABLE):
+        save_metrics(PATH_TO_SAVE_TABLE)
     
+
+    df = pd.read_csv(PATH_TO_SAVE_TABLE, index_col='Size')
+    
+    os.makedirs(os.path.dirname(savepath), exist_ok=True)
+    
+    plt.figure(figsize=(10, 6))
+    df.plot(marker='o', ax=plt.gca())
+    
+    plt.title("Comparison of sorting algorithms")
+    plt.xlabel("Array size (n)")
+    plt.ylabel("Time (seconds)")
+    plt.grid(True)
+    
+    plt.savefig(savepath)
+    plt.show()
+
+generate_plot(PATH_TO_SAVE_PLOT)
