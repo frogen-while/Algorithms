@@ -1,6 +1,5 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-import numpy as np
 import random
 import algorithms as alg
 import statistics as st
@@ -9,10 +8,12 @@ import os
 
 PATH_TO_SAVE_TABLE = "outputs/tables/metrics.csv"
 PATH_TO_SAVE_PLOT = "outputs/plots/comparison_plot.png"
+PATH_TO_SAVE_TABLE_BIG = "outputs/tables/metrics_big.csv"
+PATH_TO_SAVE_PLOT_BIG = "outputs/plots/comparison_plot_big.png"
 
 
 def generate_list(size: int) -> list:
-    return [random.randint(0, 100) for _ in range(size)]
+    return [random.randint(0, 5000) for _ in range(size)]
 
 def timer(func):
     def wrapper(*args, **kwargs):
@@ -29,10 +30,10 @@ algorithms = {
     "Quick Sort": timer(alg.quick_sort),
     "Radix Sort":timer(alg.radix_sort),
 }
-
-def compare_algorithms(listed_algs: dict):
-    sizes = [10, 50, 100, 500, 1000, 3000]
-    results = [{},{},{},{},{},{}]
+sizes = [n for n in range(10,1011,40)]
+sizes_big =[n for n in range(1000, 10001, 200)]
+def compare_algorithms(listed_algs: dict, sizes):
+    results = [{} for _ in range(len(sizes))]
     temp = []
     i = 0
     for size in sizes:
@@ -45,26 +46,24 @@ def compare_algorithms(listed_algs: dict):
                 else:
                     _, duration = func(arr)    
                 temp.append(duration)
-            results[i][name] = round(st.mean(temp), 8)
+            results[i][name] = st.mean(temp)
         i+=1
             
     return sizes, results
+
     
-def save_metrics(savepath):
-    sizes, data = compare_algorithms(algorithms)
+def save_metrics(savepath, sizes):
+    sizes, data = compare_algorithms(algorithms, sizes)
     df = pd.DataFrame(data, index=sizes)
     df.to_csv(savepath, index_label="Size")
 
-def generate_plot(savepath):
-    if not os.path.exists(PATH_TO_SAVE_TABLE):
-        save_metrics(PATH_TO_SAVE_TABLE)
+def generate_plot(savepath, sizes, pathtometrics):
+    if not os.path.exists(pathtometrics):
+        save_metrics(pathtometrics, sizes)
     
 
-    df = pd.read_csv(PATH_TO_SAVE_TABLE, index_col='Size')
+    df = pd.read_csv(pathtometrics, index_col='Size')
     
-    os.makedirs(os.path.dirname(savepath), exist_ok=True)
-    
-    plt.figure(figsize=(10, 6))
     df.plot(marker='o', ax=plt.gca())
     
     plt.title("Comparison of sorting algorithms")
@@ -75,4 +74,10 @@ def generate_plot(savepath):
     plt.savefig(savepath)
     plt.show()
 
-generate_plot(PATH_TO_SAVE_PLOT)
+
+
+
+
+
+
+

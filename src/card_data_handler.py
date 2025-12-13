@@ -5,7 +5,7 @@ PATH_TO_carddump2 = "data/carddump2.csv"
 PATH_TO_SAVE_carddump2_SORTED = "outputs/tables/carddump2_sorted.csv"
 PATH_TO_SAVE_FULL = "outputs/tables/carddump_full_sorted.csv"
 
-def sort_date_and_pin(filepath, savepath):
+def sort_date_and_pin(filepath, savepath, needtosave=False):
     shuffled_card_data = pd.read_csv(filepath, dtype={"PIN":str,"Verification Code":str})
 
     data = shuffled_card_data['Expiry Date'].values.copy()
@@ -22,13 +22,13 @@ def sort_date_and_pin(filepath, savepath):
         data[i]*=100000
         data[i]+=i
 
-    sorted_data = sort.quick_sort(data, 0, len(data)-1)
+    sorted_data = sort.radix_sort(data)
 
     sorted_indices = [num % 100000 for num in sorted_data]
 
     result_df = shuffled_card_data.iloc[sorted_indices].reset_index(drop=True)
-
-    result_df.to_csv(savepath, index=False)
+    if needtosave:
+        result_df.to_csv(savepath, index=False)
     
     
 
@@ -47,9 +47,9 @@ def combine_card_data(filepath1, filepath2, savepath):
     full_data.insert(loc=0, column='Credit Card Number', value=full_card_numbers)
     full_data.to_csv(savepath, index=False)
   
-    
-sort_date_and_pin(PATH_TO_carddump2, PATH_TO_SAVE_carddump2_SORTED, )
-combine_card_data(PATH_TO_carddump1, PATH_TO_SAVE_carddump2_SORTED, PATH_TO_SAVE_FULL)
+if __name__ == "__main__":   
+    sort_date_and_pin(PATH_TO_carddump2, PATH_TO_SAVE_carddump2_SORTED, )
+    combine_card_data(PATH_TO_carddump1, PATH_TO_SAVE_carddump2_SORTED, PATH_TO_SAVE_FULL)
 
 
      
