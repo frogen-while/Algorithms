@@ -2,7 +2,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import random
 import algorithms as alg
-import statistics as st
 import time
 import os
 
@@ -30,25 +29,24 @@ algorithms = {
     "Quick Sort": timer(alg.quick_sort),
     "Radix Sort":timer(alg.radix_sort),
 }
-sizes = [n for n in range(10,1011,40)]
-sizes_big =[n for n in range(1000, 10001, 200)]
+sizes = [n for n in range(10,1011,100)]
+sizes_big =[n for n in range(1000, 10001, 1000)]
+
 def compare_algorithms(listed_algs: dict, sizes):
-    results = [{} for _ in range(len(sizes))]
-    temp = []
-    i = 0
+    results = []
     for size in sizes:
+        row = {}
         for name, func in listed_algs.items():
-            temp = []
-            for _ in range(30):
+            durations = []
+            for _ in range(10):
                 arr = generate_list(size)
                 if name == "Quick Sort":
-                    _, duration = func(arr, 0 , len(arr)-1)
+                    _, duration = func(arr, 0, len(arr) - 1)
                 else:
-                    _, duration = func(arr)    
-                temp.append(duration)
-            results[i][name] = st.mean(temp)
-        i+=1
-            
+                    _, duration = func(arr)
+                durations.append(duration)
+            row[name] = min(durations)
+        results.append(row)
     return sizes, results
 
     
@@ -74,6 +72,8 @@ def generate_plot(savepath, sizes, pathtometrics):
     plt.savefig(savepath)
     plt.show()
 
+generate_plot(PATH_TO_SAVE_PLOT, sizes, PATH_TO_SAVE_TABLE)
+generate_plot(PATH_TO_SAVE_PLOT_BIG, sizes_big, PATH_TO_SAVE_TABLE_BIG)
 
 
 

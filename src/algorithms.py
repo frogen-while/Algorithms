@@ -34,7 +34,7 @@ def merge(left, right):
             j+=1
     
     sorted_array.extend(left[i:])
-    sorted_array.extend(left[j:])
+    sorted_array.extend(right[j:])
     return sorted_array
 
 def merge_sort(arr):
