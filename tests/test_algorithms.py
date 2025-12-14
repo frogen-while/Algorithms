@@ -41,7 +41,6 @@ class TestSortingAlgorithms(unittest.TestCase):
                         if result is not None:
                             _arr = result
 
-                    # Основная проверка unittest
                     self.assertEqual(_arr, expected, f"Failed: {name} on {t_type} case")
 
 if __name__ == "__main__":

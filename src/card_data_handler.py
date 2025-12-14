@@ -1,4 +1,4 @@
-import algorithms as sort
+from src import algorithms as sort
 import pandas as pd
 PATH_TO_carddump1 = "data/carddump1.csv"
 PATH_TO_carddump2 = "data/carddump2.csv"
@@ -29,6 +29,8 @@ def sort_date_and_pin(filepath, savepath, needtosave=False):
     result_df = shuffled_card_data.iloc[sorted_indices].reset_index(drop=True)
     if needtosave:
         result_df.to_csv(savepath, index=False)
+    else: 
+        return result_df
     
     
 
