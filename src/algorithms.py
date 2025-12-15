@@ -99,6 +99,33 @@ def radix_sort(arr):
         exp*=10
     return arr
     
+def multi_pivot_quicksort(arr, num_pivots=2):
+    if len(arr) <= 1:
+        return arr
+    
+    num_pivots = min(num_pivots, len(arr) - 1)
+    
+    pivots = sorted(arr[:num_pivots])
+    
+    segments = [[] for _ in range(num_pivots + 1)]
+    
+    for x in arr[num_pivots:]:
+        placed = False
+        for i in range(num_pivots):
+            if x < pivots[i]:
+                segments[i].append(x)
+                placed = True
+                break
+        if not placed:
+            segments[-1].append(x)
+            
+    result = []
+    for i in range(num_pivots):
+        result.extend(multi_pivot_quicksort(segments[i], num_pivots))
+        result.append(pivots[i])
+    result.extend(multi_pivot_quicksort(segments[-1], num_pivots))
+    
+    return result
 
 
 
