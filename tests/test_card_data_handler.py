@@ -91,12 +91,13 @@ class TestSortingAlgorithms(unittest.TestCase):
     #             if os.path.isfile(file_path):
     #                 os.remove(file_path)
 
+
     def test_all_sorts(self):
         for case_name, expected_df in self.expected.items():
             file_path = f"tests/temp/{case_name}.csv"
             
 
-            result_df = cdh.sort_date_and_pin(file_path, None, False)
+            result_df = cdh.sort_date_and_pin(file_path, savepath=None, needtosave=False)
             result_df = result_df.reset_index(drop=True)
             
             with self.subTest(case=case_name):

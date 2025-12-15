@@ -1,11 +1,11 @@
-from src import algorithms as sort
+import algorithms as sort
 import pandas as pd
 PATH_TO_carddump1 = "data/carddump1.csv"
 PATH_TO_carddump2 = "data/carddump2.csv"
 PATH_TO_SAVE_carddump2_SORTED = "outputs/tables/carddump2_sorted.csv"
 PATH_TO_SAVE_FULL = "outputs/tables/carddump_full_sorted.csv"
 
-def sort_date_and_pin(filepath, savepath, needtosave=False):
+def sort_date_and_pin(filepath, savepath, func = sort.bubble_sort, needtosave=False):
     shuffled_card_data = pd.read_csv(filepath, dtype={"PIN":str,"Verification Code":str})
 
     data = shuffled_card_data['Expiry Date'].values.copy()
@@ -22,7 +22,7 @@ def sort_date_and_pin(filepath, savepath, needtosave=False):
         data[i]*=100000
         data[i]+=i
 
-    sorted_data = sort.radix_sort(data)
+    sorted_data = func(data, 0, len(data)-1) if func == sort.quick_sort else func(data)
 
     sorted_indices = [num % 100000 for num in sorted_data]
 
