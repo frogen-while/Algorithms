@@ -1,4 +1,10 @@
-import algorithms as sort
+import sys
+from pathlib import Path
+root_path = str(Path(__file__).parent.parent)
+if root_path not in sys.path:
+    sys.path.append(root_path)
+
+from src import algorithms as sort
 import pandas as pd
 PATH_TO_carddump1 = "data/carddump1.csv"
 PATH_TO_carddump2 = "data/carddump2.csv"

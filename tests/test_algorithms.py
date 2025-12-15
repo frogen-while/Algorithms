@@ -21,6 +21,7 @@ class TestSortingAlgorithms(unittest.TestCase):
             "Merge Sort": alg.merge_sort,
             "Quick Sort": alg.quick_sort,
             "Radix Sort": alg.radix_sort,
+            "Multi Pivot Quick Sort": alg.multi_pivot_quicksort
         }
 
     def test_all_sorts(self):
