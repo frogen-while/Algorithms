@@ -111,31 +111,74 @@ def radix_sort(arr):
         exp *= 10
     
     return arr
+
+import random
+
+def _select_pivots(arr, num_pivots):
+    n = len(arr)
+    if n <= num_pivots:
+        return sorted(arr[:-1]) if n > 1 else []
     
+    sample_size = min(num_pivots * 3, n)
+    samples = sorted(random.sample(arr, sample_size))
+    
+    step = sample_size // (num_pivots + 1)
+    pivots = [samples[(i + 1) * step] for i in range(num_pivots)]
+    
+    return pivots
+
+def _binary_search_segment(pivots, x):
+
+    left, right = 0, len(pivots)
+    while left < right:
+        mid = (left + right) // 2
+        if x < pivots[mid]:
+            right = mid
+        else:
+            left = mid + 1
+    return left
+
 def multi_pivot_quicksort(arr, num_pivots=2):
-    if len(arr) <= 1:
-        return arr
+
+    n = len(arr)
+    if n <= 1:
+        return arr.copy() if n == 1 else []
     
-    num_pivots = min(num_pivots, len(arr) - 1)
+
+    if n <= 16:
+        result = arr.copy()
+        for i in range(1, n):
+            key = result[i]
+            j = i - 1
+            while j >= 0 and result[j] > key:
+                result[j + 1] = result[j]
+                j -= 1
+            result[j + 1] = key
+        return result
     
-    pivots = sorted(arr[:num_pivots])
+    num_pivots = min(num_pivots, n - 1)
     
-    segments = [[] for _ in range(num_pivots + 1)]
+    pivots = _select_pivots(arr, num_pivots)
+    actual_pivots = len(pivots)
     
-    for x in arr[num_pivots:]:
-        placed = False
-        for i in range(num_pivots):
-            if x < pivots[i]:
-                segments[i].append(x)
-                placed = True
-                break
-        if not placed:
-            segments[-1].append(x)
-            
+    if actual_pivots == 0:
+        return arr.copy()
+    
+    segments = [[] for _ in range(actual_pivots + 1)]
+    pivot_counts = [0] * actual_pivots  
+    
+    for x in arr:
+        seg_idx = _binary_search_segment(pivots, x)
+        
+        if seg_idx > 0 and x == pivots[seg_idx - 1]:
+            pivot_counts[seg_idx - 1] += 1
+        else:
+            segments[seg_idx].append(x)
+    
     result = []
-    for i in range(num_pivots):
+    for i in range(actual_pivots):
         result.extend(multi_pivot_quicksort(segments[i], num_pivots))
-        result.append(pivots[i])
+        result.extend([pivots[i]] * pivot_counts[i])
     result.extend(multi_pivot_quicksort(segments[-1], num_pivots))
     
     return result
