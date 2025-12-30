@@ -1,5 +1,6 @@
 
 def bubble_sort(arr):
+    arr = arr.copy()
     n = len(arr)
     for i in range(1, n):
         swapped = False
@@ -12,6 +13,7 @@ def bubble_sort(arr):
     return arr
 
 def insertion_sort(arr):
+    arr = arr.copy()
     n = len(arr)
     for i in range(1,n):
         j = i - 1
@@ -48,24 +50,29 @@ def merge_sort(arr):
 
     return merge(left_half, right_half)
 
-def partition(arr, low, high):
+def _partition(arr, low, high):
     pivot = arr[high]
     i = low
     for k in range(low, high):
         if arr[k] < pivot:
             arr[i], arr[k] = arr[k], arr[i]
-            i+=1
+            i += 1
     arr[i], arr[high] = arr[high], arr[i]
     return i
 
-def quick_sort(arr, low, high):
+def _quick_sort_recursive(arr, low, high):
     if low < high:
-        
-        pi = partition(arr, low, high)
+        pi = _partition(arr, low, high)
+        _quick_sort_recursive(arr, low, pi - 1)
+        _quick_sort_recursive(arr, pi + 1, high)
 
-        arr = quick_sort(arr, low, pi - 1)
-        arr = quick_sort(arr, pi + 1, high)
-
+def quick_sort(arr, low=None, high=None):
+    arr = arr.copy()
+    if low is None:
+        low = 0
+    if high is None:
+        high = len(arr) - 1
+    _quick_sort_recursive(arr, low, high)
     return arr 
 # ONLY FOR RADIX!!! DOES NOT WORK INDEPENDENTLY!!!
 def counting_sort(arr, exp):
@@ -90,8 +97,12 @@ def counting_sort(arr, exp):
 
     return ans
 def radix_sort(arr):
+    """Radix sort for non-negative integers only."""
     if len(arr) == 0:
         return arr
+    arr = arr.copy()
+    if any(x < 0 for x in arr):
+        raise ValueError("radix_sort does not support negative numbers")
     maxval = max(arr)
     exp = 1
     while maxval // exp >= 1:

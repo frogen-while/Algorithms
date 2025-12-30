@@ -28,7 +28,7 @@ def sort_date_and_pin(filepath, savepath, func = sort.bubble_sort, needtosave=Fa
         data[i]*=100000
         data[i]+=i
 
-    sorted_data = func(data, 0, len(data)-1) if func == sort.quick_sort else func(data)
+    sorted_data = func(data)
 
     sorted_indices = [num % 100000 for num in sorted_data]
 
