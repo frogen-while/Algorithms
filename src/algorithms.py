@@ -74,40 +74,42 @@ def quick_sort(arr, low=None, high=None):
         high = len(arr) - 1
     _quick_sort_recursive(arr, low, high)
     return arr 
-# ONLY FOR RADIX!!! DOES NOT WORK INDEPENDENTLY!!!
-def counting_sort(arr, exp):
-    n = len(arr)
-    ctnarr = [0] * 10
-    ans = [0] * n 
 
-
-    for i in range(n):
-        index = arr[i] // exp
-        ctnarr[index % 10] += 1
-    
-    for i in range(1, 10):
-        ctnarr[i]+=ctnarr[i-1]
-
-    i = n-1
-    while i>=0:
-        index = (arr[i]//exp)%10
-        ans[ctnarr[index]-1] = arr[i]
-        ctnarr[index]-=1
-        i-=1
-
-    return ans
 def radix_sort(arr):
-    """Radix sort for non-negative integers only."""
-    if len(arr) == 0:
+    # Radix sort is for non-negative integers only
+    n = len(arr)
+    if n == 0:
         return arr
+    
     arr = arr.copy()
-    if any(x < 0 for x in arr):
+    minval = min(arr)
+    if minval < 0:
         raise ValueError("radix_sort does not support negative numbers")
+    
     maxval = max(arr)
     exp = 1
+    
+    output = [0] * n
+    
     while maxval // exp >= 1:
-        arr = counting_sort(arr, exp)
-        exp*=10
+        count = [0] * 10
+        
+        for i in range(n):
+            idx = (arr[i] // exp) % 10
+            count[idx] += 1
+        
+        for i in range(1, 10):
+            count[i] += count[i - 1]
+        
+        for i in range(n - 1, -1, -1):
+            idx = (arr[i] // exp) % 10
+            count[idx] -= 1
+            output[count[idx]] = arr[i]
+        
+        arr, output = output, arr
+        
+        exp *= 10
+    
     return arr
     
 def multi_pivot_quicksort(arr, num_pivots=2):
