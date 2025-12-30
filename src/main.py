@@ -13,12 +13,13 @@ from src import algorithms as alg
 import time
 import os
 
+
 PATH_TO_SAVE_TABLE = "outputs/tables/metrics_algorithms.csv"
 PATH_TO_SAVE_PLOT = "outputs/plots/comparison_algorithms_plot.png"
 PATH_TO_SAVE_TABLE_BIG = "outputs/tables/metrics_algorithms_big.csv"
 PATH_TO_SAVE_PLOT_BIG = "outputs/plots/comparison_algorithms_plot_big.png"
 PATH_TO_SAVE_TABLE_CDH = "outputs/tables/metrics_cdh.csv"
-PATH_TO_SAVE_PLOT_CDH = "outputs/plots/metrics_cdh.png"
+PATH_TO_SAVE_PLOT_CDH = "outputs/plots/metrics_plot_cdh.png"
 
 
 def generate_list(size: int) -> list:
@@ -33,8 +34,8 @@ def timer(func):
     return wrapper
 
 algorithms = {
-    "Bubble Sort": timer(alg.bubble_sort), 
-    "Insertion Sort":timer(alg.insertion_sort), 
+    # "Bubble Sort": timer(alg.bubble_sort), 
+    # "Insertion Sort":timer(alg.insertion_sort), 
     "Merge Sort": timer(alg.merge_sort),
     "Quick Sort": timer(alg.quick_sort),
     "Radix Sort":timer(alg.radix_sort),
@@ -80,47 +81,52 @@ def compare_card_data_handler(listed_algs: dict):
 
     return size, results
 
-    
-def save_metrics(savepath, sizes):
-    sizes, data = compare_card_data_handler(algorithms_no_timer) if savepath == "outputs/tables/metrics_cdh.csv" else compare_algorithms(algorithms, sizes) 
-    df = pd.DataFrame(data, index=[sizes] if savepath == "outputs/tables/metrics_cdh.csv" else sizes)
-    df.to_csv(savepath, index_label="Size")
+def compare_quick_sort(sizes):
+    results = []
+    for size in sizes:
+        row = {}
+        for i in range(1, min(20, min(sizes))):
+            durations = []
+            for _ in range(10):
+                arr = generate_list(size)
+                start = time.perf_counter()
+                alg.multi_pivot_quicksort(arr, i)
+                end = time.perf_counter()
+                durations.append(end-start)
+            row[f"Pivots: {i}"] = min(durations)
+        results.append(row) 
+    return sizes, results
 
-def generate_plot(savepath, sizes, pathtometrics):
-    if not os.path.exists(pathtometrics):
-        save_metrics(pathtometrics, sizes) 
     
+def save_metrics(savepath, data_generator, **kwargs):
+    os.makedirs(os.path.dirname(savepath), exist_ok=True)
+    sizes, data = data_generator(**kwargs)
+    index = [sizes] if isinstance(sizes, (int, float)) else sizes
+    
+    df = pd.DataFrame(data, index=index)
+    df.to_excel(savepath, index_label="Size")
+    print(f"Metrics saved to: {savepath}")
+
+def generate_plot(savepath, pathtometrics, kind='line', title="Comparison", xlabel="Size", ylabel="Time (s)"):
+    if not os.path.exists(pathtometrics):
+        print(f"ERROR: FILE {pathtometrics} not found. Run save_metrics first")
+        return
 
     df = pd.read_csv(pathtometrics, index_col='Size')
-    if pathtometrics == "outputs/tables/metrics_cdh.csv":
-        plt.figure(figsize=(10, 6))
+    plt.figure(figsize=(10, 6))
     
-        df.iloc[0].plot(kind='bar', ax=plt.gca(), color=['skyblue', 'orange', 'green', 'red', 'purple'])
-        
-        plt.title("Comparison of sorting algorithms (20k rows)")
-        plt.xlabel("Algorithms")
-        plt.ylabel("Time (seconds)")
+    if kind == 'bar':
+        df.iloc[0].plot(kind='bar', ax=plt.gca(), color=plt.cm.Paired.colors)
         plt.xticks(rotation=45)
-
-        plt.savefig(savepath)
-        plt.show()
     else:
         df.plot(marker='o', ax=plt.gca())
-        
-        plt.title("Comparison of sorting algorithms")
-        plt.xlabel("Array size (n)")
-        plt.ylabel("Time (seconds)")
-        plt.grid(True)
-        
-        plt.savefig(savepath)
-        plt.show()
+        plt.grid(True, linestyle='--', alpha=0.7)
 
+    plt.title(title)
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    plt.tight_layout()
+    plt.savefig(savepath)
+    plt.show()
 
-generate_plot(PATH_TO_SAVE_PLOT_CDH, None, PATH_TO_SAVE_TABLE_CDH)
-
-
-
-
-
-
-
+save_metrics("outputs/tables/metrics_quick_sort.xlsx", compare_algorithms,listed_algs = algorithms,  sizes = sizes)
