@@ -8,7 +8,7 @@ if root_path not in sys.path:
 import unittest
 import os
 import pandas as pd
-from src import card_data_handler as cdh
+from src import CardDataHandler as cdh
 from src import algorithms as alg
 def get_correct_expected(df):
     temp = df.copy()

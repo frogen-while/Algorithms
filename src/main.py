@@ -4,10 +4,9 @@ root_path = str(Path(__file__).parent.parent)
 if root_path not in sys.path:
     sys.path.append(root_path)
 
-
 import pandas as pd
 import matplotlib.pyplot as plt
-from src import card_data_handler as cdh
+from src import CardDataHandler as cdh
 import random
 from src import algorithms as alg
 import time
