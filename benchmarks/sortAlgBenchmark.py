@@ -1,7 +1,3 @@
-import sys
-import os
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 from src import utils as ut
 from src import algorithms as alg
 
@@ -11,8 +7,8 @@ PATH_TO_SAVE_TABLE_BIG = "outputs/tables/metrics_algorithms_big.csv"
 PATH_TO_SAVE_PLOT_BIG = "outputs/plots/comparison_algorithms_plot_big.png"
 
 algorithms = {
-    # "Bubble Sort": ut.timer(alg.bubble_sort), 
-    # "Insertion Sort":ut.timer(alg.insertion_sort), 
+    "Bubble Sort": ut.timer(alg.bubble_sort), 
+    "Insertion Sort":ut.timer(alg.insertion_sort), 
     "Merge Sort": ut.timer(alg.merge_sort),
     "Quick Sort": ut.timer(alg.quick_sort),
     "Radix Sort":ut.timer(alg.radix_sort)

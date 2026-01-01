@@ -1,8 +1,4 @@
-import sys
-import os
 import time
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 from src import utils as ut
 from src import CardDataHandler as cdh
 from src import algorithms as alg

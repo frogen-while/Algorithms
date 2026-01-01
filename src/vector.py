@@ -31,7 +31,7 @@ class Vector:
             self.vector[index] = value
             self._size += 1
         else:
-            raise("Index out of range")
+            raise IndexError("Index out of range")
         
     def resize(self, new_size: int) -> None:
         if self._size > new_size:
@@ -53,7 +53,7 @@ class Vector:
             self._size -=1
             self.vector[self._size] = None
         else:
-            raise("Index out of range")
+            raise IndexError("Index out of range")
         
     def erase_range(self, start: int, end:int) -> None:
         count = end - start
