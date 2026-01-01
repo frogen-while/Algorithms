@@ -8,7 +8,7 @@ from src import algorithms as alg
 
 PATH_TO_SAVE_TABLE = "outputs/tables/metrics_quick_sort.csv"
 PATH_TO_SAVE_PLOT = "outputs/plots/metrics_quick_sort.png"
-sizes = [i for i in range(100, 1001, 101)]
+sizes = [i for i in range(1000, 100001, 1000)]
 
 def compare_quick_sort(sizes):
     results = []
@@ -28,4 +28,4 @@ def compare_quick_sort(sizes):
 
 if __name__ == "__main__":
     ut.save_metrics(PATH_TO_SAVE_TABLE, compare_quick_sort, sizes = sizes)
-    ut.generate_plot(PATH_TO_SAVE_PLOT, PATH_TO_SAVE_TABLE, kind="bar", xlabel=None)
+    ut.generate_plot(PATH_TO_SAVE_PLOT, PATH_TO_SAVE_TABLE)

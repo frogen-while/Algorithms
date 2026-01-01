@@ -41,6 +41,22 @@ class LinkedList:
 
         if self.head is None:
             self.tail = None
+    
+    def pop_back(self) -> None:
+        if self.head is None:
+            raise IndexError("Can not pop_back from empty list")
+        
+        if self.head == self.tail:
+            self.head = None
+            self.tail = None
+        else:
+            curNode = self.head
+            while curNode.next != self.tail:
+                curNode = curNode.next
+            curNode.next = None
+            self.tail = curNode
+        
+        self._size -= 1
 
     def insert(self, index:int, value:Any) -> None:
         if index < 0 or index > self._size:
@@ -74,3 +90,24 @@ class LinkedList:
                 curNode = curNode.next
             return curNode.value
         
+    def clear(self) -> None:
+        self.head = None
+        self.tail = None
+        self._size = 0
+
+    def erase(self, index: int) -> None:
+        if index < 0 or index >= self._size:
+            raise IndexError("Index out of range")
+        else:
+            if index == 0:
+                self.pop_front()
+                return
+            elif index == self._size-1:
+                self.pop_back()
+                return
+            else:
+                curNode = self.head
+                for _ in range(index-1):
+                    curNode = curNode.next
+                curNode.next = curNode.next.next
+                self._size -= 1

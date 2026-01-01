@@ -21,15 +21,25 @@ class Vector:
             self._reallocate()
         self.vector[self._size] = value
         self._size += 1
-    
+
+    def insert(self, index: int, value: Any) -> None:
+        if 0 <= index <= self._size:
+            if self._cap - self._size <= 1 :
+                self._reallocate()
+            for i in range(self._size, index, -1):
+                self.vector[i] = self.vector[i - 1]
+            self.vector[index] = value
+            self._size += 1
+        else:
+            raise("Index out of range")
+        
     def resize(self, new_size: int) -> None:
         if self._size > new_size:
             for _ in range(self._size - new_size):
                 self.pop_back()
         elif self._size < new_size:
-            if new_size > self._cap:
-                while new_size > self._cap:
-                    self._reallocate()
+            while new_size > self._cap:
+                self._reallocate()
             for i in range(self._size, new_size):
                 self.vector[i] = None
             self._size = new_size
@@ -42,7 +52,9 @@ class Vector:
 
             self._size -=1
             self.vector[self._size] = None
-
+        else:
+            raise("Index out of range")
+        
     def erase_range(self, start: int, end:int) -> None:
         count = end - start
         
@@ -76,7 +88,8 @@ class Vector:
     def at(self, index:int) -> Any:
         if 0 <= index < self._size:
             return self.vector[index]
-        raise IndexError("Index out of range")
+        else:
+            raise IndexError("Index out of range")
         
     def size(self) -> int:
         return self._size
