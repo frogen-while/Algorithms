@@ -7,8 +7,8 @@ PATH_TO_SAVE_TABLE = "outputs/tables/metrics_cdh.csv"
 PATH_TO_SAVE_PLOT = "outputs/plots/metrics_plot_cdh.png"
 
 algorithms = {
-    # "Bubble Sort": alg.bubble_sort, 
-    # "Insertion Sort": alg.insertion_sort, 
+    "Bubble Sort": alg.bubble_sort, 
+    "Insertion Sort": alg.insertion_sort, 
     "Merge Sort": alg.merge_sort,
     "Quick Sort": alg.quick_sort,
     "Radix Sort": alg.radix_sort
@@ -20,10 +20,10 @@ def compare_card_data_handler(listed_algs: dict):
     for name, func in listed_algs.items():
         durations = []
         for _ in range(10):
-            start = time.time()
+            start = time.perf_counter()
             cdh.sort_date_and_pin("data/carddump2.csv", savepath=None, needtosave=False, func=func)
-            duration = time.time() - start
-            print(duration)
+            end = time.perf_counter()
+            duration = end - start
             durations.append(duration)
         results[name] = min(durations)
 

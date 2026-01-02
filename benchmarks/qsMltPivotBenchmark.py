@@ -1,5 +1,6 @@
 from src import utils as ut
 from src import algorithms as alg
+import time
 
 PATH_TO_SAVE_TABLE = "outputs/tables/metrics_quick_sort.csv"
 PATH_TO_SAVE_PLOT = "outputs/plots/metrics_quick_sort.png"
@@ -24,3 +25,4 @@ def compare_quick_sort(sizes):
 if __name__ == "__main__":
     ut.save_metrics(PATH_TO_SAVE_TABLE, compare_quick_sort, sizes = sizes)
     ut.generate_plot(PATH_TO_SAVE_PLOT, PATH_TO_SAVE_TABLE)
+    
