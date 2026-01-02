@@ -1,8 +1,12 @@
-import unittest
 import os
+import unittest
+
 import pandas as pd
-from src import CardDataHandler as cdh
+
 from src import algorithms as alg
+from src import card_data_handler as cdh
+
+
 def get_correct_expected(df):
     temp = df.copy()
 

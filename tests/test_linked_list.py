@@ -1,5 +1,6 @@
 import unittest
-from src import LinkedList as ll
+
+from src import linked_list as ll
 
 
 class TestLinkedList(unittest.TestCase):

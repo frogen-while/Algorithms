@@ -1,8 +1,9 @@
-from src import vector as v
-from src import LinkedList as ll
-from src import utils as ut
 import random
 import time
+
+from src import linked_list as ll
+from src import utils as ut
+from src import vector as v
 
 SIZE = 1000000
 ITERATIONS = 5
