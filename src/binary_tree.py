@@ -25,14 +25,16 @@ class BinarySearchTree:
         return cur_node
     
     def in_order(self):
-        self._in_order_recursive(self.root)
-
+        return self._in_order_recursive(self.root)
+    
     def _in_order_recursive(self, root):
+        result = []
         if root == None:
             return
         self._in_order_recursive(root.left)
-        print(root)
+        result.append(root)
         self._in_order_recursive(root.right)
+        return result
 
     def get_height(self, node):
         if node == None:
