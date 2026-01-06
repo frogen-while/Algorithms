@@ -73,8 +73,81 @@ class BinaryTree:
         if node == None:
             return 0
         return 1 + max(self.get_height(node.left), self.get_height(node.right))
+    
+    def search(self, target):
+        return self._search_recursive( self.root, target)
         
+    def _search_recursive(self, node, target):
+        if node is None:
+            return False
+        if node.key == target:
+            return True
+        
+        res1 = self._search_recursive(node.left, target)
+        if res1:
+            return True
+        
+        res2 = self._search_recursive(node.right, target)
+        if res2:
+            return True  
+              
+    def delete_deepest(self, root, dnode):
+        queue = [root]
 
+        while queue:
+            curr = queue.pop(0)
+
+            if curr == dnode:
+                curr = None
+                del dnode
+                return
+
+            if curr.right:
+            
+                if curr.right == dnode:
+                    curr.right = None
+                    del dnode
+                    return
+                queue.append(curr.right)
+
+            if curr.left:
+            
+                if curr.left == dnode:
+                    curr.left = None
+                    del dnode
+                    return
+                queue.append(curr.left)
+
+def deletion(self, key):
+    if self.root is None:
+        return None
+    if self.root.left is None and self.root.right is None:
+        if self.root.data == key:
+            return None
+        else:
+            return self.root
+
+    queue = [self.root]
+    curr = None
+    keyNode = None
+    while queue:
+        curr = queue.pop(0)
+        if curr.data == key:
+            keyNode = curr
+
+        if curr.left:
+            queue.append(curr.left)
+
+        if curr.right:
+            queue.append(curr.right)
+
+
+    if keyNode is not None:
+        x = curr.data
+        keyNode.data = x
+        self.delete_deepest(self.root, curr)
+
+    return self.root
 
 class BinarySearchTree(BinaryTree):
     def __init__(self):
