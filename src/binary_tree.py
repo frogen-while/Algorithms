@@ -9,6 +9,16 @@ class Node:
     def __str__(self):
         return str(self.key)
 
+class TernaryNode(Node):
+    def __init__(self, key):
+        self.key = [key] 
+        self.left = None
+        self.middle = None
+        self.right = None
+
+    def __str__(self):
+        return super().__str__()
+
 class BinaryTree:
     def __init__(self):
         self.root = None
@@ -248,3 +258,70 @@ class BinarySearchTree(BinaryTree):
     
     def _delete_deepest(self, root, dnode):
         raise NotImplementedError("BinarySearchTree deletion uses a different logic and doesn't need _delete_deepest")
+    
+
+class TernaryTree:
+    def __init__(self):
+        self.root = None
+
+    def _is_full(self, node):
+        return len(node.key) == 2
+
+
+    def insert(self, value):
+        if self.root is None:
+            self.root = TernaryNode(value)
+        else:
+            self._insert_recursive(self.root, value)
+        
+        
+
+    def _insert_recursive(self, cur_node, value):
+        if value in cur_node.key:
+            return
+
+        if not self._is_full(cur_node):
+            cur_node.key.append(value)
+            cur_node.key.sort()
+            return 
+        
+        if value < cur_node.key[0]:
+            if cur_node.left is None:
+                cur_node.left = TernaryNode(value)
+            else:
+                self._insert_recursive(cur_node.left, value)
+
+        elif value > cur_node.key[1]:
+            if cur_node.right is None:
+                cur_node.right = TernaryNode(value)
+            else:
+                self._insert_recursive(cur_node.right, value)
+
+        else:
+            if cur_node.middle is None:
+                cur_node.middle = TernaryNode(value)
+            else:
+                self._insert_recursive(cur_node.middle, value)
+    
+    def search(self, target):
+        return self._search_recursive(target, self.root)
+
+    def _search_recursive(self, target, node):
+        if node is None:
+            return False
+        
+        if target in node.key:
+            return True
+        
+        if len(node.key) < 2:
+            return False
+
+        if target > node.key[1]:
+            return self._search_recursive(target, node.right)
+        elif target < node.key[0]:
+            return self._search_recursive(target, node.left)
+        else:
+            return self._search_recursive(target, node.middle)
+        
+
+    
