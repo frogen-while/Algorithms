@@ -177,6 +177,12 @@ class BinaryTree:
             self._delete_deepest(self.root, curr)
 
         return self.root
+    
+    def clear(self):
+        order = self.post_order()
+        for key in order:
+            self.delete(key)
+
     def display(self, node=None, level=0, prefix="Root: "):
         if node is None:
             node = self.root

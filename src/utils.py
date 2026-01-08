@@ -42,7 +42,6 @@ def generate_plot(
     xlabel: str = "Size",
     ylabel: str = "Time (s)"
 ) -> None:
-    """Generate and save a plot from metrics CSV file."""
     if not os.path.exists(path_to_metrics):
         raise FileNotFoundError(
             f"Metrics file not found: {path_to_metrics}. Run save_metrics first."
