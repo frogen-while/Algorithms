@@ -260,7 +260,7 @@ class BinarySearchTree(BinaryTree):
         raise NotImplementedError("BinarySearchTree deletion uses a different logic and doesn't need _delete_deepest")
     
 
-class TernaryTree:
+class TernarySearchTree:
     def __init__(self):
         self.root = None
 
@@ -322,6 +322,21 @@ class TernaryTree:
             return self._search_recursive(target, node.left)
         else:
             return self._search_recursive(target, node.middle)
-        
 
+    def in_order(self):
+        result = []
+        self._in_order_recursive(self.root, result)
+        return result
+
+    def _in_order_recursive(self, root, result):
+        if root is None:
+            return []
+
+        self._in_order_recursive(root.left, result)
+        result.append(root.key[0])
+        if len(root.key) == 2:
+            self._in_order_recursive(root.middle, result)
+            result.append(root.key[1])
+            self._in_order_recursive(root.right, result)
+        return result
     
