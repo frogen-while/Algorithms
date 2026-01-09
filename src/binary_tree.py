@@ -309,25 +309,86 @@ class TernarySearchTree:
             else:
                 self._insert_recursive(cur_node.middle, value)
     
+    
+    def delete(self, value):
+        self.root = self._delete_recursive(self.root, value)
+
+    def _delete_recursive(self, node, value):
+        if node is None:
+            return None
+
+        if value < node.key[0]:
+            node.left = self._delete_recursive(node.left, value)
+            return node
+        
+        if len(node.key) == 2 and value > node.key[1]:
+            node.right = self._delete_recursive(node.right, value)
+            return node
+            
+        if len(node.key) == 2 and node.key[0] < value < node.key[1]:
+            node.middle = self._delete_recursive(node.middle, value)
+            return node
+        
+        if len(node.key) == 1 and value > node.key[0]:
+             node.middle = self._delete_recursive(node.middle, value)
+             return node
+
+        if node.left is None and node.middle is None and node.right is None:
+            if value in node.key:
+                node.key.remove(value)
+            
+            if len(node.key) == 0:
+                return None
+            return node
+
+        if value == node.key[0]:
+
+            if node.middle is not None:
+                successor_val = self._get_min_value(node.middle)
+                node.key[0] = successor_val 
+                node.middle = self._delete_recursive(node.middle, successor_val)
+            else:
+                node = node.left 
+        
+
+        elif len(node.key) == 2 and value == node.key[1]:
+
+            if node.right is not None:
+                successor_val = self._get_min_value(node.right)
+                node.key[1] = successor_val 
+
+                node.right = self._delete_recursive(node.right, successor_val)
+            else:
+
+                 node.key.pop()
+        if len(node.key) == 0:
+            return None
+            
+        return node
+        
+    def _get_min_value(self, node):
+        current = node
+        while current.left is not None:
+            current = current.left
+        return current.key[0]
+    
     def search(self, target):
         return self._search_recursive(target, self.root)
 
     def _search_recursive(self, target, node):
         if node is None:
             return False
-        
+
         if target in node.key:
             return True
         
-        if len(node.key) < 2:
-            return False
-
-        if target > node.key[1]:
-            return self._search_recursive(target, node.right)
-        elif target < node.key[0]:
+        if target < node.key[0]:
             return self._search_recursive(target, node.left)
-        else:
-            return self._search_recursive(target, node.middle)
+        
+        if len(node.key) == 2 and target > node.key[1]:
+            return self._search_recursive(target, node.right)
+    
+        return self._search_recursive(target, node.middle)
 
     def in_order(self):
         result = []
@@ -336,13 +397,54 @@ class TernarySearchTree:
 
     def _in_order_recursive(self, root, result):
         if root is None:
-            return []
+            return 
 
         self._in_order_recursive(root.left, result)
         result.append(root.key[0])
+        self._in_order_recursive(root.middle, result)
+
         if len(root.key) == 2:
-            self._in_order_recursive(root.middle, result)
             result.append(root.key[1])
             self._in_order_recursive(root.right, result)
         return result
     
+    def pre_order(self):
+        result = []
+        self._pre_order_recursive(self.root, result)
+        return result
+
+    def _pre_order_recursive(self, node, result):
+        if node is None:
+            return 
+        
+        result.extend(node.key)
+        self._pre_order_recursive(node.left, result)
+        self._pre_order_recursive(node.middle, result)
+
+        if len(node.key) == 2:
+            self._pre_order_recursive(node.right, result)
+
+        return result
+        
+    
+    def post_order(self):
+        result = []
+        self._post_order_recursive(self.root, result)
+        return result
+
+    
+    def _post_order_recursive(self, node, result):
+        if node is None:
+            return
+        self._post_order_recursive(node.left, result)
+        self._post_order_recursive(node.middle, result)
+
+        if len(node.key) == 2:
+            self._post_order_recursive(node.right, result)
+
+        result.extend(node.key)
+
+    def clear(self):
+        order = self.post_order()
+        for key in order:
+            self.delete(key)
