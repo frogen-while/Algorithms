@@ -11,22 +11,30 @@ PATH_TO_carddump2 = "data/carddump2.csv"
 PATH_TO_SAVE_carddump2_SORTED = "outputs/tables/carddump2_sorted.csv"
 PATH_TO_SAVE_FULL = "outputs/tables/carddump_full_sorted.csv"
 
-def sort_date_and_pin(filepath, savepath, func = sort.bubble_sort, needtosave=False):
-    shuffled_card_data = pd.read_csv(filepath, dtype={"PIN":str,"Verification Code":str})
+
+def sort_date_and_pin_df(
+    card_df: pd.DataFrame,
+    savepath: str | None = None,
+    func=sort.bubble_sort,
+    needtosave: bool = False,
+):
+    shuffled_card_data = card_df.copy()
 
     data = shuffled_card_data['Expiry Date'].values.copy()
     pin = shuffled_card_data["PIN"].values.copy()
+
     for j in range(len(data)):
         for i, letter in enumerate(data[j]):
             if letter == '/':
-                data[j] = data[j][i+1:]
+                data[j] = data[j][i + 1:]
                 break
-            data[j]+=data[j][i]
+            data[j] += data[j][i]
+
     for i in range(len(data)):
-        data[i]+=pin[i]
-        data[i]=int(data[i])
-        data[i]*=100000
-        data[i]+=i
+        data[i] += pin[i]
+        data[i] = int(data[i])
+        data[i] *= 100000
+        data[i] += i
 
     sorted_data = func(data)
 
@@ -34,9 +42,21 @@ def sort_date_and_pin(filepath, savepath, func = sort.bubble_sort, needtosave=Fa
 
     result_df = shuffled_card_data.iloc[sorted_indices].reset_index(drop=True)
     if needtosave:
+        if savepath is None:
+            raise ValueError("savepath must be provided when needtosave=True")
         result_df.to_csv(savepath, index=False)
-    else: 
-        return result_df
+        return None
+
+    return result_df
+
+def sort_date_and_pin(filepath, savepath, func = sort.bubble_sort, needtosave=False):
+    shuffled_card_data = pd.read_csv(filepath, dtype={"PIN":str,"Verification Code":str})
+    return sort_date_and_pin_df(
+        shuffled_card_data,
+        savepath=savepath,
+        func=func,
+        needtosave=needtosave,
+    )
     
     
 

@@ -1,6 +1,7 @@
 *venv/
-*data/
-*outputs/
+data/*
+outputs/
+outputs/**
 *__pycache__/
 *.egg-info
 __init__.py
