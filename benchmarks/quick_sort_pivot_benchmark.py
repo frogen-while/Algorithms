@@ -1,35 +1,42 @@
+import random
 import time
+from tqdm import tqdm
 
 from src import algorithms as alg
 from src import utils as ut
 
+
 PATH_TO_SAVE_TABLE = "outputs/tables/metrics_quick_sort.csv"
 PATH_TO_SAVE_PLOT = "outputs/plots/metrics_quick_sort.png"
 
-SIZES = list(range(1000, 100001, 1000))
+SIZES = list(range(1000, 50001, 1000))
 PIVOT_RANGE = range(1, 21)
-ITERATIONS = 10
+ITERATIONS = 5
+SEED = 42
 
-def compare_quick_sort(sizes: list) -> tuple:
-    """Compare multi-pivot quicksort with different pivot counts."""
+
+def _make_list(size: int, seed: int) -> list[int]:
+    rng = random.Random(seed)
+    return [rng.randint(0, 5000) for _ in range(size)]
+
+def compare_quick_sort(sizes: list[int], iterations: int = ITERATIONS, seed: int = SEED) -> tuple:
     results = []
-    total = len(sizes)
 
-    for step, size in enumerate(sizes, 1):
-        print(f"[{step}/{total}] Processing size={size}...")
+    for size in tqdm(sizes, desc="Benchmark quicksort sizes"):
         row = {}
+        
+        base_arrays = [_make_list(size, seed + size + i) for i in range(iterations)]
+
         for num_pivots in PIVOT_RANGE:
             durations = []
-            for _ in range(ITERATIONS):
-                arr = ut.generate_list(size)
+            for i, base in enumerate(base_arrays):
+                random.seed(seed + size + i * 1000 + num_pivots)
                 start = time.perf_counter()
-                alg.multi_pivot_quicksort(arr, num_pivots)
+                alg.multi_pivot_quicksort(base, num_pivots)
                 end = time.perf_counter()
                 durations.append(end - start)
             row[f"Pivots: {num_pivots}"] = min(durations)
         results.append(row)
-
-    print("Benchmark completed!")
     return sizes, results
 
 
