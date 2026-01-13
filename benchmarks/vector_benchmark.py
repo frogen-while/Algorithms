@@ -5,75 +5,110 @@ from src import linked_list as ll
 from src import utils as ut
 from src import vector as v
 
-SIZE = 100000
+
+SIZES = [100000]
 ITERATIONS = 5
-PATH = "outputs/tables/metrics_vector.csv"
-PATH2 = "outputs/plots/metrics_vector.png"
+SEED = 42
 
-def create_objects():
-    return v.Vector(), ll.LinkedList(), []
+PATH_TO_SAVE_TABLE = "outputs/tables/metrics_vector.csv"
+PATH_TO_SAVE_PLOT = "outputs/plots/metrics_vector.png"
 
-def fill_object(obj, elements):
-    if hasattr(obj, 'push_back'):
+
+FACTORIES = {
+    "Vector": v.Vector,
+    "Linked list": ll.LinkedList,
+    "List": list,
+}
+
+
+def _fill_object(obj, elements) -> None:
+    if hasattr(obj, "push_back"):
         for el in elements:
             obj.push_back(el)
-    else:
-        obj.extend(elements)
+        return
 
-def bench_append(obj_factory, size):
-    elements = [random.randint(-5000, 5000) for _ in range(size)]
-    durations = []
-    for _ in range(ITERATIONS):
-        obj = obj_factory()
-        start = time.perf_counter()
-        fill_object(obj, elements)
-        end = time.perf_counter()
-        durations.append(end - start)
-    return min(durations)
+    obj.extend(elements)
 
-def bench_delete(obj_factory, size):
-    elements = [random.randint(-5000, 5000) for _ in range(size)]
-    durations = []
-    for _ in range(ITERATIONS):
-        obj = obj_factory()
-        fill_object(obj, elements)
-        index = random.randint(0, size - 1)
-        start = time.perf_counter()
-        if hasattr(obj, 'erase'):
-            obj.erase(index)
-        else:
-            obj.pop(index)
-        end = time.perf_counter()
-        durations.append(end - start)
-    return min(durations)
 
-def bench_insert(obj_factory, size):
-    elements = [random.randint(-5000, 5000) for _ in range(size)]
-    durations = []
-    for _ in range(ITERATIONS):
-        obj = obj_factory()
-        fill_object(obj, elements)
-        index = random.randint(0, size - 1)
-        start = time.perf_counter()
-        obj.insert(index, 0)
-        end = time.perf_counter()
-        durations.append(end - start)
-    return min(durations)
+def _delete_at(obj, index: int) -> None:
+    if hasattr(obj, "erase"):
+        obj.erase(index)
+        return
+    obj.pop(index)
 
-def build():
-    factories = {
-        "Vector": v.Vector,
-        "Linked list": ll.LinkedList,
-        "List": list
-    }
-    
-    result = {}
-    for name, factory in factories.items():
-        result[f"{name} (append)"] = [bench_append(factory, SIZE)]
-        result[f"{name} (delete)"] = [bench_delete(factory, SIZE)]
-        result[f"{name} (insert)"] = [bench_insert(factory, SIZE)]
-    
-    return SIZE, result
+
+def _insert_at(obj, index: int, value) -> None:
+    obj.insert(index, value)
+
+
+def compare_vector_structures(
+    sizes: list[int] = SIZES,
+    iterations: int = ITERATIONS,
+    seed: int = SEED,
+    factories: dict = FACTORIES,
+) -> tuple:
+    results = []
+    for size in sizes:
+        rng = random.Random(seed + size)
+        elements = [rng.randint(-5000, 5000) for _ in range(size)]
+        delete_indices = [rng.randrange(size) for _ in range(iterations)]
+        insert_indices = [rng.randrange(size) for _ in range(iterations)]
+
+        row = {}
+        for name, factory in factories.items():
+            # append
+            durations = []
+            for _i in range(iterations):
+                obj = factory()
+                start = time.perf_counter()
+                _fill_object(obj, elements)
+                end = time.perf_counter()
+                durations.append(end - start)
+            row[f"{name} (append)"] = min(durations)
+
+            # delete
+            durations = []
+            for index in delete_indices:
+                obj = factory()
+                _fill_object(obj, elements)
+                start = time.perf_counter()
+                _delete_at(obj, index)
+                end = time.perf_counter()
+                durations.append(end - start)
+            row[f"{name} (delete)"] = min(durations)
+
+            # insert
+            durations = []
+            for index in insert_indices:
+                obj = factory()
+                _fill_object(obj, elements)
+                start = time.perf_counter()
+                _insert_at(obj, index, 0)
+                end = time.perf_counter()
+                durations.append(end - start)
+            row[f"{name} (insert)"] = min(durations)
+
+        results.append(row)
+
+    return sizes, results
+
+
+def build(
+    sizes: list[int] = SIZES,
+    iterations: int = ITERATIONS,
+    seed: int = SEED,
+):
+    ut.save_metrics(
+        PATH_TO_SAVE_TABLE,
+        compare_vector_structures,
+        sizes=sizes,
+        iterations=iterations,
+        seed=seed,
+    )
+    plot_kind = "bar" if len(sizes) == 1 else "line"
+    ut.generate_plot(PATH_TO_SAVE_PLOT, PATH_TO_SAVE_TABLE, kind=plot_kind, xlabel="Size")
+    return sizes
+
 
 if __name__ == "__main__":
     build()
