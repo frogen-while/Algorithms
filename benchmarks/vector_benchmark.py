@@ -5,7 +5,7 @@ from src import linked_list as ll
 from src import utils as ut
 from src import vector as v
 
-SIZE = 1000000
+SIZE = 100000
 ITERATIONS = 5
 PATH = "outputs/tables/metrics_vector.csv"
 PATH2 = "outputs/plots/metrics_vector.png"

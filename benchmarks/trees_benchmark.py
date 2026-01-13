@@ -1,26 +1,63 @@
-from src import trees as tree
-from src import utils as ut
-from sortedcontainers import SortedSet 
+import os
+import random
 import time
 from tqdm import tqdm
 
-def fill_tree(tree, keys):
-    if hasattr(tree, 'add'):
-        method = tree.add
+from sortedcontainers import SortedSet
+
+from src import trees as tree
+from src import utils as ut
+
+
+SIZES = [2**13 - 1,2**14 - 1,2**15 - 1,2**16 - 1]
+ITERATIONS = 10
+SEED = 42
+
+PATH_TO_SAVE_TABLE_INSERT = "outputs/tables/metrics_trees_insert.csv"
+PATH_TO_SAVE_TABLE_DELETE = "outputs/tables/metrics_trees_delete.csv"
+PATH_TO_SAVE_TABLE_SEARCH = "outputs/tables/metrics_trees_search.csv"
+
+PATH_TO_SAVE_PLOT_INSERT = "outputs/plots/metrics_trees_insert.png"
+PATH_TO_SAVE_PLOT_DELETE = "outputs/plots/metrics_trees_delete.png"
+PATH_TO_SAVE_PLOT_SEARCH = "outputs/plots/metrics_trees_search.png"
+
+
+def _tree_insert(obj, key) -> None:
+    if hasattr(obj, "add"):
+        obj.add(key)
     else:
-        method = tree.insert
+        obj.insert(key)
 
+
+def _tree_delete(obj, key) -> None:
+    if hasattr(obj, "discard"):
+        obj.discard(key)
+    else:
+        obj.delete(key)
+
+
+def _tree_contains(obj, key) -> bool:
+    if hasattr(obj, "__contains__"):
+        return key in obj
+    return obj.search(key)
+
+
+def _fill_tree(obj, keys) -> None:
     for key in keys:
-        method(key)
+        _tree_insert(obj, key)
 
-    return tree
 
-def set_up():
-    size = 2**16 - 1
-    random_keys = ut.generate_list(size)
+def _make_unique_keys(size: int, seed: int) -> list[int]:
+    rng = random.Random(seed)
+    population = max(size * 10, size + 1)
+    return rng.sample(range(population), k=size)
+
+
+def _build_configs(size: int, seed: int):
+    random_keys = _make_unique_keys(size, seed)
     best_case_keys = ut.get_bco_order(random_keys)
 
-    configs = [
+    return [
         ("binary_search_tree_random", tree.BinarySearchTree, random_keys),
         ("ternary_tree_random", tree.TernarySearchTree, random_keys),
         ("sorted_set_random", SortedSet, random_keys),
@@ -28,98 +65,82 @@ def set_up():
         ("sorted_set_best-case", SortedSet, best_case_keys),
         ("ternary_tree_best-case", tree.TernarySearchTree, best_case_keys),
     ]
-    return size, configs
+
+def compare_insert(sizes: list[int], iterations: int = ITERATIONS, seed: int = SEED):
+    results = []
+    for size in sizes:
+        configs = _build_configs(size, seed + size)
+        row = {}
+        for name, factory, keys in tqdm(configs, desc=f"Insert (size={size})"):
+            durations = []
+            for i in range(iterations):
+                instance = factory()
+                start = time.perf_counter()
+                _fill_tree(instance, keys)
+                end = time.perf_counter()
+                durations.append(end - start)
+            row[name] = min(durations)
+        results.append(row)
+    return sizes, results
 
 
-def bench_insert(configs, size, iterations=10):
-    result = {}
-    
-    for name, tree, keys in tqdm(configs, desc="Progress insert benchmark"):
-        durations = []
-        instance = tree()
-        for _ in range(iterations):
-
-            method = instance.add if hasattr(instance, 'add') else instance.insert
-            
-            start = time.perf_counter()
-            for el in keys:
-                method(el)
-            end = time.perf_counter()
-            durations.append(end - start)
-            instance.clear()
-
-        result[name] = min(durations)
-        
-    return size, result
-
-def bench_deletion(configs,size, iterations=10):
-    result = {}
-
-    for name, tree, keys in tqdm(configs, desc="Progress delete benchmark"):
-        durations = []
-        instance = tree()
-        for _ in range(iterations):
-            fill_tree(instance, keys)
-            if hasattr(instance, 'discard'):
-                del_method = instance.discard
-            else:
-                del_method = instance.delete 
-
-            start = time.perf_counter()
-            for el in keys:
-                del_method(el)
-            end = time.perf_counter()
-            durations.append(end - start)
-            instance.clear()
-            
-        result[name] = min(durations)
-
-    return size, result
-
-def bench_search(configs, size, iterations=10):
-    result = {}
-    
-    for name, tree, keys in tqdm(configs, desc="Progress search benchmark"):
-        durations = []
-    
-        instance = tree()
-        fill_tree(instance, keys)
-        
-        if hasattr(instance, '__contains__'):
-            search_func = instance.__contains__
-        else:
-            search_func = instance.search
+def compare_delete(sizes: list[int], iterations: int = ITERATIONS, seed: int = SEED):
+    results = []
+    for size in sizes:
+        configs = _build_configs(size, seed + size)
+        row = {}
+        for name, factory, keys in tqdm(configs, desc=f"Delete (size={size})"):
+            durations = []
+            for _i in range(iterations):
+                instance = factory()
+                _fill_tree(instance, keys)
+                start = time.perf_counter()
+                for key in keys:
+                    _tree_delete(instance, key)
+                end = time.perf_counter()
+                durations.append(end - start)
+            row[name] = min(durations)
+        results.append(row)
+    return sizes, results
 
 
-        for _ in range(iterations):
-            start = time.perf_counter()
-            for el in keys:
-                search_func(el)
-            end = time.perf_counter()
-            durations.append(end - start)
-            
-        result[name] = min(durations)
+def compare_search(sizes: list[int], iterations: int = ITERATIONS, seed: int = SEED):
+    results = []
+    for size in sizes:
+        configs = _build_configs(size, seed + size)
+        row = {}
+        for name, factory, keys in tqdm(configs, desc=f"Search (size={size})"):
+            instance = factory()
+            _fill_tree(instance, keys)
 
-        
-    return size, result
+            durations = []
+            for _i in range(iterations):
+                start = time.perf_counter()
+                for key in keys:
+                    _tree_contains(instance, key)
+                end = time.perf_counter()
+                durations.append(end - start)
+            row[name] = min(durations)
+        results.append(row)
+    return sizes, results
 
-def build(folder_to_save_metrics = "outputs/tables", folder_to_save_plots = "outputs/plots"):
-    size, configs = set_up()
-    print("Starting insertion benchmark")
-    path_to_insertion = folder_to_save_metrics+"/metrics_trees_insert.csv"
-    path_to_deletion = folder_to_save_metrics+"/metrics_trees_delete.csv"
-    path_to_search = folder_to_save_metrics+"/metrics_trees_search.csv"
-    path_to_insertion_plot = folder_to_save_plots+"/metrics_trees_insert.png"
-    path_to_deletion_plot = folder_to_save_plots+"/metrics_trees_delete.png"
-    path_to_search_plot = folder_to_save_plots+"/metrics_trees_search.png"
-    ut.save_metrics(path_to_insertion, bench_insert, configs=configs, size = size)
-    ut.save_metrics(path_to_deletion, bench_deletion, configs=configs, size = size)
-    ut.save_metrics(path_to_search, bench_search, configs=configs, size = size)
-    print("Metrics saved")
-    ut.generate_plot(path_to_insertion_plot, path_to_insertion, kind="bar", xlabel="Insert")
-    ut.generate_plot(path_to_deletion_plot, path_to_deletion, kind="bar", xlabel="Delete")
-    ut.generate_plot(path_to_search_plot, path_to_search, kind="bar", xlabel="Search")
-    return
+
+def build(
+    sizes: list[int] = SIZES,
+    iterations: int = ITERATIONS,
+    seed: int = SEED,
+):
+
+    ut.save_metrics(PATH_TO_SAVE_TABLE_INSERT, compare_insert, sizes=sizes, iterations=iterations, seed=seed)
+    ut.save_metrics(PATH_TO_SAVE_TABLE_DELETE, compare_delete, sizes=sizes, iterations=iterations, seed=seed)
+    ut.save_metrics(PATH_TO_SAVE_TABLE_SEARCH, compare_search, sizes=sizes, iterations=iterations, seed=seed)
+
+    plot_kind = "bar" if len(sizes) == 1 else "line"
+    ut.generate_plot(PATH_TO_SAVE_PLOT_INSERT, PATH_TO_SAVE_TABLE_INSERT, kind=plot_kind, xlabel="Size")
+    ut.generate_plot(PATH_TO_SAVE_PLOT_DELETE, PATH_TO_SAVE_TABLE_DELETE, kind=plot_kind, xlabel="Size")
+    ut.generate_plot(PATH_TO_SAVE_PLOT_SEARCH, PATH_TO_SAVE_TABLE_SEARCH, kind=plot_kind, xlabel="Size")
+
+    return sizes
 
 if __name__ == "__main__":
     build()
