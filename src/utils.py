@@ -1,3 +1,4 @@
+from collections import deque
 import functools
 import os
 import random
@@ -65,3 +66,21 @@ def generate_plot(
     plt.savefig(savepath)
     plt.close()
 
+def get_bco_order(keys: List[int]) -> List[int]:
+    """Rearange keys to best-case order"""
+    
+    sorted_keys = sorted(keys)
+    result = []
+
+    queue = deque([(0, len(sorted_keys) - 1)])
+    
+    while queue:
+        left, right = queue.popleft()
+        if left <= right:
+            mid = (left + right) // 2
+            result.append(sorted_keys[mid]) 
+
+            queue.append((left, mid - 1))
+            queue.append((mid + 1, right))
+            
+    return result

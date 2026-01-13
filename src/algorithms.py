@@ -1,3 +1,5 @@
+import random
+
 
 def bubble_sort(arr):
     arr = arr.copy()
@@ -111,8 +113,6 @@ def radix_sort(arr):
         exp *= 10
     
     return arr
-
-import random
 
 def _select_pivots(arr, num_pivots):
     n = len(arr)

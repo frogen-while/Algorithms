@@ -1,4 +1,7 @@
 from collections import deque
+import sys
+
+sys.setrecursionlimit(50000)
 
 class Node:
     def __init__(self, key):
@@ -8,6 +11,13 @@ class Node:
     
     def __str__(self):
         return str(self.key)
+
+class AVLNode(Node):
+    def __init__(self, key):
+        super().__init__(key)
+        self.height = 1
+    def __str__(self):
+        return super().__str__()
 
 class TernaryNode(Node):
     def __init__(self, key):
@@ -340,26 +350,31 @@ class TernarySearchTree:
             return node
 
         if value == node.key[0]:
-
             if node.middle is not None:
                 successor_val = TernarySearchTree._get_min_value(node.middle)
                 node.key[0] = successor_val 
                 node.middle = TernarySearchTree._delete_recursive(node.middle, successor_val)
+            elif node.left is not None:
+                predecessor_val = TernarySearchTree._get_max_value(node.left)
+                node.key[0] = predecessor_val
+                node.left = TernarySearchTree._delete_recursive(node.left, predecessor_val)
+            elif len(node.key) == 2:
+                node.key.pop(0)
+                node.middle = node.right
+                node.right = None
             else:
-                node = node.left 
-        
+                # Только правый потомок (который для одного ключа - это middle)
+                return node.right
 
         elif len(node.key) == 2 and value == node.key[1]:
-
             if node.right is not None:
                 successor_val = TernarySearchTree._get_min_value(node.right)
                 node.key[1] = successor_val 
-
                 node.right = TernarySearchTree._delete_recursive(node.right, successor_val)
             else:
+                node.key.pop()
 
-                 node.key.pop()
-        if len(node.key) == 0:
+        if node is None or len(node.key) == 0:
             return None
             
         return node
@@ -370,6 +385,13 @@ class TernarySearchTree:
         while current.left is not None:
             current = current.left
         return current.key[0]
+    
+    @staticmethod
+    def _get_max_value(node):
+        current = node
+        while current.right is not None:
+            current = current.right
+        return current.key[-1]
     
     def search(self, target):
         return TernarySearchTree._search_recursive(target, self.root)
@@ -447,3 +469,13 @@ class TernarySearchTree:
         order = self.post_order()
         for key in order:
             self.delete(key)
+
+    def get_height(self, node):
+        if node == None:
+            return 0
+        return 1 + max(self.get_height(node.left), self.get_height(node.middle), self.get_height(node.right))
+
+class AVL(BinarySearchTree):
+    def __init__(self):
+        super().__init__()
+    

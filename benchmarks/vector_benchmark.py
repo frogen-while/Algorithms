@@ -26,12 +26,7 @@ def bench_append(obj_factory, size):
     for _ in range(ITERATIONS):
         obj = obj_factory()
         start = time.perf_counter()
-        if hasattr(obj, 'push_back'):
-            for el in elements:
-                obj.push_back(el)
-        else:
-            for el in elements:
-                obj.append(el)
+        fill_object(obj, elements)
         end = time.perf_counter()
         durations.append(end - start)
     return min(durations)
@@ -81,4 +76,4 @@ def build():
     return SIZE, result
 
 if __name__ == "__main__":
-    ut.generate_plot(PATH2, PATH, kind="bar", xlabel=None)
+    build()
