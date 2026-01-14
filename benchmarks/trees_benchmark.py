@@ -9,17 +9,19 @@ from src import trees as tree
 from src import utils as ut
 
 
-SIZES = [2**13 - 1,2**14 - 1,2**15 - 1,2**16 - 1]
+SIZES = [2**14 - 1]
 ITERATIONS = 10
 SEED = 42
 
 PATH_TO_SAVE_TABLE_INSERT = "outputs/tables/metrics_trees_insert.csv"
 PATH_TO_SAVE_TABLE_DELETE = "outputs/tables/metrics_trees_delete.csv"
 PATH_TO_SAVE_TABLE_SEARCH = "outputs/tables/metrics_trees_search.csv"
+PATH_TO_SAVE_TABLE_HEIGHT = "outputs/tables/metrics_trees_height.csv"
 
 PATH_TO_SAVE_PLOT_INSERT = "outputs/plots/metrics_trees_insert.png"
 PATH_TO_SAVE_PLOT_DELETE = "outputs/plots/metrics_trees_delete.png"
 PATH_TO_SAVE_PLOT_SEARCH = "outputs/plots/metrics_trees_search.png"
+PATH_TO_SAVE_PLOT_HEIGHT = "outputs/plots/metrics_trees_height.png"
 
 
 def _tree_insert(obj, key) -> None:
@@ -40,6 +42,11 @@ def _tree_contains(obj, key) -> bool:
     if hasattr(obj, "__contains__"):
         return key in obj
     return obj.search(key)
+
+
+def _tree_height(obj) -> int | None:
+    if hasattr(obj, "height"):
+        return obj.height()
 
 
 def _fill_tree(obj, keys) -> None:
@@ -127,6 +134,21 @@ def compare_search(sizes: list[int], iterations: int = ITERATIONS, seed: int = S
     return sizes, results
 
 
+def compare_height(sizes: list[int], seed: int = SEED):
+    results = []
+    for size in sizes:
+        configs = _build_configs(size, seed + size)
+        row = {}
+        for name, factory, keys in tqdm(configs, desc=f"Height (size={size})"):
+            if "sorted_set" in name:
+                continue
+            instance = factory()
+            _fill_tree(instance, keys)
+            row[name] = _tree_height(instance)
+        results.append(row)
+    return sizes, results
+
+
 def build(
     sizes: list[int] = SIZES,
     iterations: int = ITERATIONS,
@@ -136,11 +158,13 @@ def build(
     ut.save_metrics(PATH_TO_SAVE_TABLE_INSERT, compare_insert, sizes=sizes, iterations=iterations, seed=seed)
     ut.save_metrics(PATH_TO_SAVE_TABLE_DELETE, compare_delete, sizes=sizes, iterations=iterations, seed=seed)
     ut.save_metrics(PATH_TO_SAVE_TABLE_SEARCH, compare_search, sizes=sizes, iterations=iterations, seed=seed)
+    ut.save_metrics(PATH_TO_SAVE_TABLE_HEIGHT, compare_height, sizes=sizes, seed=seed)
 
     plot_kind = "bar" if len(sizes) == 1 else "line"
     ut.generate_plot(PATH_TO_SAVE_PLOT_INSERT, PATH_TO_SAVE_TABLE_INSERT, kind=plot_kind, xlabel="Size")
     ut.generate_plot(PATH_TO_SAVE_PLOT_DELETE, PATH_TO_SAVE_TABLE_DELETE, kind=plot_kind, xlabel="Size")
     ut.generate_plot(PATH_TO_SAVE_PLOT_SEARCH, PATH_TO_SAVE_TABLE_SEARCH, kind=plot_kind, xlabel="Size")
+    ut.generate_plot(PATH_TO_SAVE_PLOT_HEIGHT, PATH_TO_SAVE_TABLE_HEIGHT, kind="bar", xlabel="Size", ylabel="Height")
 
     return sizes
 
