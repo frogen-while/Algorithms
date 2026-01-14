@@ -1,0 +1,2 @@
+Size,binary_search_tree_random,ternary_tree_random,avl_tree_random,sorted_set_random,binary_search_tree_best-case,ternary_tree_best-case,avl_tree_best-case,sorted_set_best-case
+16383,0.05400111002381891,0.0758599839755334,0.24335721001261845,0.027792765002232045,0.034302171028684825,0.07008874596795067,0.20558214600896463,0.025515005982015282
