@@ -40,26 +40,6 @@ class BinarySearchTree:
     def __init__(self):
         self.root: Node | None = None
 
-    def __str__(self):
-        if self.root is None:
-            return "Empty Tree"
-        return self._build_tree_string(self.root, 0, "Root: ")
-
-    @staticmethod
-    def _build_tree_string(node: Node | None, level: int, prefix: str) -> str:
-        if node is None:
-            return ""
-        res = " " * (level * 4) + prefix + str(node.key) + "\n"
-        if node.left or node.right:
-            if node.left:
-                res += BinarySearchTree._build_tree_string(node.left, level + 1, "L--- ")
-            else:
-                res += " " * ((level + 1) * 4) + "L--- None\n"
-            if node.right:
-                res += BinarySearchTree._build_tree_string(node.right, level + 1, "R--- ")
-            else:
-                res += " " * ((level + 1) * 4) + "R--- None\n"
-        return res
 
     def insert(self, key) -> None:
         self.root = self._insert_recursive(self.root, key)
@@ -165,7 +145,6 @@ class BinarySearchTree:
 
 
 class AVL(BinarySearchTree):
-
     def __init__(self):
         super().__init__()
         self.root: AVLNode | None = None
