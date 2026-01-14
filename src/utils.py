@@ -13,17 +13,6 @@ def generate_list(size: int) -> List[int]:
     """Generate a list of random integers."""
     return [random.randint(0, 5000) for _ in range(size)]
 
-
-def timer(func: Callable) -> Callable:
-    """Decorator to measure function execution time."""
-    @functools.wraps(func)
-    def wrapper(*args, **kwargs) -> Tuple:
-        start = time.perf_counter()
-        result = func(*args, **kwargs)
-        end = time.perf_counter()
-        return result, end - start
-    return wrapper
-
 def save_metrics(savepath: str, data_generator: Callable, **kwargs) -> None:
     """Save benchmark metrics to CSV file."""
     os.makedirs(os.path.dirname(savepath), exist_ok=True)

@@ -56,15 +56,15 @@ def compare_vector_structures(
 
     row = {}
     for name, factory in tqdm(factories.items()):
-        # # append
-        # durations = []
-        # for _i in range(iterations):
-        #     obj = factory()
-        #     start = time.perf_counter()
-        #     _fill_object(obj, elements)
-        #     end = time.perf_counter()
-        #     durations.append(end - start)
-        # row[f"{name} (append)"] = min(durations)
+        # append
+        durations = []
+        for _i in range(iterations):
+            obj = factory()
+            start = time.perf_counter()
+            _fill_object(obj, elements)
+            end = time.perf_counter()
+            durations.append(end - start)
+        row[f"{name} (append)"] = min(durations)
 
         # delete
         durations = []

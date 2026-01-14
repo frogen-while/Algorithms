@@ -44,8 +44,7 @@ def compare_card_data_handler(
 
     return SIZE, row
 
-
-if __name__ == "__main__":
+def build():
     ut.save_metrics(
         PATH_TO_SAVE_TABLE,
         compare_card_data_handler,
@@ -54,4 +53,8 @@ if __name__ == "__main__":
         data_path=DATA_PATH,
     )
     ut.generate_plot(PATH_TO_SAVE_PLOT, PATH_TO_SAVE_TABLE, kind="bar", xlabel="Size")
+    return
+
+if __name__ == "__main__":
+    build()
 

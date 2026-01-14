@@ -24,7 +24,7 @@ def compare_quick_sort(sizes: list[int], iterations: int = ITERATIONS, seed: int
 
     for size in tqdm(sizes, desc="Benchmark quicksort sizes"):
         row = {}
-        
+
         base_arrays = [_make_list(size, seed + size + i) for i in range(iterations)]
 
         for num_pivots in PIVOT_RANGE:
@@ -39,7 +39,9 @@ def compare_quick_sort(sizes: list[int], iterations: int = ITERATIONS, seed: int
         results.append(row)
     return sizes, results
 
-
-if __name__ == "__main__":
+def build():
     ut.save_metrics(PATH_TO_SAVE_TABLE, compare_quick_sort, sizes=SIZES)
     ut.generate_plot(PATH_TO_SAVE_PLOT, PATH_TO_SAVE_TABLE)
+    return
+if __name__ == "__main__":
+    build
