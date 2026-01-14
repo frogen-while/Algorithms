@@ -15,7 +15,7 @@ PATH_TO_SAVE_FULL = "outputs/tables/carddump_full_sorted.csv"
 def sort_date_and_pin_df(
     card_df: pd.DataFrame,
     savepath: str | None = None,
-    func=sort.bubble_sort,
+    func=sort.radix_sort,
     needtosave: bool = False,
 ):
     shuffled_card_data = card_df.copy()
@@ -49,7 +49,7 @@ def sort_date_and_pin_df(
 
     return result_df
 
-def sort_date_and_pin(filepath, savepath, func = sort.bubble_sort, needtosave=False):
+def sort_date_and_pin(filepath, savepath, func = sort.radix_sort, needtosave=False):
     shuffled_card_data = pd.read_csv(filepath, dtype={"PIN":str,"Verification Code":str})
     return sort_date_and_pin_df(
         shuffled_card_data,
@@ -74,10 +74,13 @@ def combine_card_data(filepath1, filepath2, savepath):
     full_data = data.drop('Credit Card Number', axis=1)
     full_data.insert(loc=0, column='Credit Card Number', value=full_card_numbers)
     full_data.to_csv(savepath, index=False)
-  
-if __name__ == "__main__":   
+
+def build():
     sort_date_and_pin(PATH_TO_carddump2, PATH_TO_SAVE_carddump2_SORTED, )
     combine_card_data(PATH_TO_carddump1, PATH_TO_SAVE_carddump2_SORTED, PATH_TO_SAVE_FULL)
+  
+if __name__ == "__main__":   
+    build()
 
 
      

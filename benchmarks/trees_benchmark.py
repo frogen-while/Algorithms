@@ -60,10 +60,12 @@ def _build_configs(size: int, seed: int):
     return [
         ("binary_search_tree_random", tree.BinarySearchTree, random_keys),
         ("ternary_tree_random", tree.TernarySearchTree, random_keys),
+        ("avl_tree_random", tree.AVL, random_keys),
         ("sorted_set_random", SortedSet, random_keys),
         ("binary_search_tree_best-case", tree.BinarySearchTree, best_case_keys),
-        ("sorted_set_best-case", SortedSet, best_case_keys),
         ("ternary_tree_best-case", tree.TernarySearchTree, best_case_keys),
+        ("avl_tree_best-case", tree.AVL, best_case_keys),
+        ("sorted_set_best-case", SortedSet, best_case_keys)
     ]
 
 def compare_insert(sizes: list[int], iterations: int = ITERATIONS, seed: int = SEED):
