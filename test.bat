@@ -8,3 +8,6 @@ rem python tests/test_vector.py -v
 rem python tests/test_linked_list.py -v
 rem python tests/test_algorithms.py -v
 rem python tests/test_card_data_handler.py -v
+rem python tests/test_avl.py
+rem python tests/test_bst.py
+rem python tests/test_tst.py
