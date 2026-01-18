@@ -2,3 +2,4 @@
 *.egg-info
 __init__.py
 outputs/
+.pytest_cache/
