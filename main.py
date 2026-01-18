@@ -66,9 +66,5 @@ def main() -> None:
             cdhd.combine_card_data(cdhd.PATH_TO_carddump1, cdhd.PATH_TO_SAVE_carddump2_SORTED, cdhd.PATH_TO_SAVE_FULL)
             print("Done")
 
-
 if __name__ == "__main__":
     main()
-                
-
-

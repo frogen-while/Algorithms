@@ -75,13 +75,6 @@ def combine_card_data(filepath1, filepath2, savepath):
     full_data.insert(loc=0, column='Credit Card Number', value=full_card_numbers)
     full_data.to_csv(savepath, index=False)
 
-def build():
-    sort_date_and_pin(PATH_TO_carddump2, PATH_TO_SAVE_carddump2_SORTED, )
-    combine_card_data(PATH_TO_carddump1, PATH_TO_SAVE_carddump2_SORTED, PATH_TO_SAVE_FULL)
-  
-if __name__ == "__main__":   
-    build()
-
 
      
 

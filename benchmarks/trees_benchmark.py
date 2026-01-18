@@ -63,6 +63,7 @@ def _make_unique_keys(size: int, seed: int) -> list[int]:
 def _build_configs(size: int, seed: int):
     random_keys = _make_unique_keys(size, seed)
     best_case_keys = ut.get_bco_order(random_keys)
+    best_case_keys_ternary = ut.get_bco_order_ternary(random_keys)
 
     return [
         ("binary_search_tree_random", tree.BinarySearchTree, random_keys),
@@ -70,7 +71,7 @@ def _build_configs(size: int, seed: int):
         ("avl_tree_random", tree.AVL, random_keys),
         ("sorted_set_random", SortedSet, random_keys),
         ("binary_search_tree_best-case", tree.BinarySearchTree, best_case_keys),
-        ("ternary_tree_best-case", tree.TernarySearchTree, best_case_keys),
+        ("ternary_tree_best-case", tree.TernarySearchTree, best_case_keys_ternary),
         ("avl_tree_best-case", tree.AVL, best_case_keys),
         ("sorted_set_best-case", SortedSet, best_case_keys)
     ]

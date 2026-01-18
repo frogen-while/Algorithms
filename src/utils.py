@@ -73,3 +73,38 @@ def get_bco_order(keys: List[int]) -> List[int]:
             queue.append((mid + 1, right))
             
     return result
+
+def get_bco_order_ternary(keys: List[int]) -> List[int]:
+    sorted_keys = sorted(keys)
+    result = []
+    queue = [(0, len(sorted_keys) - 1)]
+    head = 0
+    while head < len(queue):
+        lo, hi = queue[head]
+        head += 1
+        if lo > hi:
+            continue
+
+        length = hi - lo + 1
+
+        if length == 1:
+            result.append(sorted_keys[lo])
+            continue
+
+        if length == 2:
+            result.append(sorted_keys[lo])
+            result.append(sorted_keys[hi])
+            continue
+
+        third_1 = lo + length // 3
+        third_2 = lo + 2 * length // 3
+
+        if third_2 == third_1:
+            third_2 += 1
+
+        result.append(sorted_keys[third_1])
+        result.append(sorted_keys[third_2])
+        queue.append((lo, third_1 - 1))
+        queue.append((third_1 + 1, third_2 - 1))
+        queue.append((third_2 + 1, hi))
+    return result

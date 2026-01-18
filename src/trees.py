@@ -40,6 +40,11 @@ class BinarySearchTree:
     def __init__(self):
         self.root: Node | None = None
 
+    def __str__(self) -> str:
+        if self.root is None:
+            return "Empty Tree"
+        return " ".join(str(key) for key in self.in_order())
+
 
     def insert(self, key) -> None:
         self.root = self._insert_recursive(self.root, key)
@@ -459,15 +464,13 @@ class TernarySearchTree:
     def clear(self):
         self.root = None
 
-    def get_height(self, node=None):
+    def height(self, node=None):
         if node is None and self.root is None:
             return 0
         if node is None:
             node = self.root
-        left_h = self.get_height(node.left) if node.left else 0
-        mid_h = self.get_height(node.middle) if node.middle else 0
-        right_h = self.get_height(node.right) if node.right else 0
+        left_h = self.height(node.left) if node.left else 0
+        mid_h = self.height(node.middle) if node.middle else 0
+        right_h = self.height(node.right) if node.right else 0
         return 1 + max(left_h, mid_h, right_h)
 
-    def height(self):
-        return self.get_height()
