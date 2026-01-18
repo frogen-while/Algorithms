@@ -5,18 +5,18 @@ Educational set of data structures and algorithms in Python, with tests and benc
 This repository is intended for coursework and experimentation: you can explore core data structures, verify correctness with tests, and compare performance using included benchmark scripts.
 
 ## Structure
-- [src/](src/) — implementations of algorithms and data structures.
-- [tests/](tests/) — unit tests.
-- [benchmarks/](benchmarks/) — benchmarks.
-- [data/](data/) — source datasets.
-- [generated_data/](generated_data/) and [outputs/](outputs/) — generated artifacts and run outputs.
+- [src/](src/) - implementations of algorithms and data structures.
+- [tests/](tests/) - unit tests.
+- [benchmarks/](benchmarks/) - benchmarks.
+- [data/](data/) - source datasets.
+- [generated_data/](generated_data/) and [outputs/](outputs/) - generated artifacts and run outputs.
 
 ## Implementations overview
-- [src/linked_list.py](src/linked_list.py) — linked list implementation and operations.
-- [src/vector.py](src/vector.py) — dynamic array / vector structure.
-- [src/trees.py](src/trees.py) — tree structures (BST/AVL/TST) and operations.
-- [src/card_data_handler.py](src/card_data_handler.py) — dataset parsing and normalization helpers.
-- [src/utils.py](src/utils.py) — shared utilities.
+- [src/linked_list.py](src/linked_list.py) - linked list implementation and operations.
+- [src/vector.py](src/vector.py) - dynamic array / vector structure.
+- [src/trees.py](src/trees.py) - tree structures (BST/AVL/TST) and operations.
+- [src/card_data_handler.py](src/card_data_handler.py) - dataset parsing and normalization helpers.
+- [src/utils.py](src/utils.py) - shared utilities.
 
 ## Requirements
 - Python 3.10+
